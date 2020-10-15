@@ -1,0 +1,13 @@
+.DS_Store
+
+__pycache__/
+parse.py
+
+*.log
+local_settings.py
+db.sqlite3
+
+.mypy_cache/
+
+.vscode/
+tweetme.code-workspace
