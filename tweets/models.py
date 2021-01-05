@@ -10,4 +10,4 @@ upload_to -- directory to store file, DB saves location
 class Tweet(models.Model):
     # id = models.AutoField(primary_key = True) -- created when stored
     content = models.TextField(blank=True, null=True)
-    image = models.FieldFile(upload_to='images/', black=True, null=True)
+    image = models.FileField(upload_to='images/', blank=True, null=True)
