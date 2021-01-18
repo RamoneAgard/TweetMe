@@ -5,5 +5,84 @@
 {% endblock %}
 
 {% block content %}
-     <h1> Hello World! - Welcome to tweetme </h1>
+    <div class='row text-center mb-5'>
+        <div class='col'>
+            <h1> Hello World! - Welcome to TweetMe </h1>
+        </div>
+    </div>
+    
+
+    <div id='tweets' class='row row-cols-1 justify-content-center'>
+        Loading ...
+    </div>
+
+
+    <!-- temp home view handling -->
+    <script>
+    const tweetsList = document.getElementById('tweets');
+
+    function handleDidLike(tweet_id, likeCount){
+        //interact with api and update number of likes
+        console.log(likeCount);
+        return;
+    }
+
+    function likeBtn(item){
+        var btn = document.createElement("BUTTON");
+
+        btn.setAttribute('class', 'btn btn-primary');
+        btn.innerHTML = item.likes + " Likes";
+        let input = 'handleDidLike('+ item.id+ ', '+ item.likes +')'
+        btn.setAttribute('onclick', input);
+        return btn;
+    }
+
+    function createTweetElement(item){
+        var newt = document.createElement('div');
+        newt.setAttribute('class', 'tweet text-center col-8 mb-4 py-3 border mx-auto');
+        let id = 'tweet-'+ item.id;
+        newt.setAttribute('id', id);
+        var contentText = document.createElement('p');
+        contentText.innerText = item.content;
+        //contentText.setAttribute("class", 'row');
+        newt.appendChild(contentText);
+        newt.appendChild(likeBtn(item));
+        return newt;
+    }
+
+    function createTweetList(items){
+        tweetsList.innerHTML = '';
+        for(var i = 0; i < items.length; i++){
+            var curr = createTweetElement(items[i]);
+            tweetsList.appendChild(curr);
+        }
+    }
+
+    function update() {
+        var xhttp = new XMLHttpRequest();
+        const method = 'GET';
+        const url = 'tweets';
+        const responseType = 'json';
+
+        xhttp.onload = function() {
+            const serverResponse = xhttp.response;
+            var itemList = serverResponse.response;
+            console.log(itemList);
+            createTweetList(itemList);
+        }
+
+        // Old way to get response
+        // xhttp.onreadystatechange = function() {
+        //     if(this.readyState == 4 && this.status == 200){
+        //         do Stuff ...
+        //     }
+        // }
+        
+        xhttp.open(method, url);
+        xhttp.responseType = responseType;
+        xhttp.send()
+    }
+    update();
+
+    </script>
 {% endblock %}
