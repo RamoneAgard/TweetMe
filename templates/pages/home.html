@@ -5,13 +5,28 @@
 {% endblock %}
 
 {% block content %}
-    <div class='row text-center mb-5'>
+    <!-- title div -->
+    <div class='row text-center mb-2'>
         <div class='col'>
             <h1> Hello World! - Welcome to TweetMe </h1>
         </div>
     </div>
-    
 
+    <!-- Form for creating a new tweet -->
+    <div class='row mb-4'>
+        <div class='col-md-4 mx-auto col-10'>
+            <form id='tweet-create-form' class='form' method='POST' action='/create-tweet'>
+                {% csrf_token %}
+                <div class='d-none alert alert-danger' id='tweet-create-form-error'>     
+                </div>
+                <input type='hidden' value='/' name='next'>
+                <textarea class='form-control' required='required' name='content' placeholder="Tweet Something Here..."></textarea>
+                <button type='submit' class='btn btn-primary'>Post</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Parent container for the tweets -->
     <div id='tweets' class='row row-cols-1 justify-content-center'>
         Loading ...
     </div>
@@ -20,13 +35,83 @@
     <!-- temp home view handling -->
     <script>
     const tweetsList = document.getElementById('tweets');
+    const tweetCreateForm = document.getElementById('tweet-create-form');
+    tweetCreateForm.addEventListener('submit', handleTweetCreateFormSubmit);
 
+    //handle form submission for a new tweet
+    function handleTweetCreateFormSubmit(event){
+        event.preventDefault();
+        const myForm = event.target;
+        const myFormData = new FormData(myForm);
+        const url = myForm.getAttribute('action');
+        const method = myForm.getAttribute('method');
+        const responseType = 'json';
+        var xhttp = new XMLHttpRequest();
+        xhttp.onload = function(){
+            if(this.status === 201){
+                //clear errors
+                handleTweetFormError('', false);
+                //should be the tweet created 
+                const serverResponse = this.response;
+                // if response type is not specified
+                //const responseJson = JSON.parse(serverResponse);
+                const newTweetEl = createTweetElement(serverResponse);
+                // put newest tweet up top
+                tweetsList.prepend(newTweetEl);
+            }
+            else if(xhttp.status === 400){
+                const errorJson = this.response;
+                const errorContent = errorJson.content;
+                let errorContentMsg;
+                if(errorContent){
+                    errorContentMsg = errorContent[0];
+                    if(errorContentMsg){
+                        handleTweetFormError(errorContentMsg, true);
+                    }
+                    else {
+                        alert("An error occured. Please try again later");
+                    }
+                }
+                else{
+                    alert("An error occured. Please try again later");
+                }
+            }
+            else if(xhttp.status === 500){
+                alert("There was a server error. Please try again later");
+            }
+        }
+        xhttp.onerror = function(){
+            alert("An error occured. Please try again later");
+        }
+        xhttp.open(method, url);
+        xhttp.responseType = responseType;
+        xhttp.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+        xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhttp.send(myFormData);
+        myForm.reset();
+    }
+
+    //handle error in model form and display message
+    function handleTweetFormError(msg, display){
+        var myErrorDiv = document.getElementById('tweet-create-form-error');
+        if(display === true){
+            myErrorDiv.setAttribute('class','d-block alert aler-danger');
+            myErrorDiv.innerHTML = msg;
+        }
+        else{
+            myErrorDiv.setAttribute('class','d-none alert aler-danger');
+        }
+
+    }
+
+    //called when a tweet is liked 
     function handleDidLike(tweet_id, likeCount){
         //interact with api and update number of likes
         console.log(likeCount);
         return;
     }
 
+    //create a like button for individual tweet element
     function likeBtn(item){
         var btn = document.createElement("BUTTON");
 
@@ -37,19 +122,24 @@
         return btn;
     }
 
+    //turn tweet DB info into html element to display
     function createTweetElement(item){
         var newt = document.createElement('div');
-        newt.setAttribute('class', 'tweet text-center col-8 mb-4 py-3 border mx-auto');
+        newt.setAttribute('class', 'tweet text-center col-12 col-md-9 mb-4 py-3 border rounded mx-auto');
         let id = 'tweet-'+ item.id;
         newt.setAttribute('id', id);
         var contentText = document.createElement('p');
         contentText.innerText = item.content;
         //contentText.setAttribute("class", 'row');
         newt.appendChild(contentText);
-        newt.appendChild(likeBtn(item));
+        var btnGroup = document.createElement('div');
+        btnGroup.setAttribute('class', 'btn-group');
+        btnGroup.appendChild(likeBtn(item));
+        newt.appendChild(btnGroup);
         return newt;
     }
 
+    //create tweet elements and add to parent node
     function createTweetList(items){
         tweetsList.innerHTML = '';
         for(var i = 0; i < items.length; i++){
@@ -58,6 +148,7 @@
         }
     }
 
+    //pulls tweets from backend api enpoint and display on page 
     function update() {
         var xhttp = new XMLHttpRequest();
         const method = 'GET';
