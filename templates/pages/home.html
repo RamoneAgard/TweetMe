@@ -76,6 +76,14 @@
                     alert("An error occured. Please try again later");
                 }
             }
+            else if (xhttp.status === 401){
+                alert("You must login!");
+                window.location.href = '/login';
+            }
+            else if (xhttp.status === 403){
+                alert("You must login!");
+                window.location.href = '/login';
+            }
             else if(xhttp.status === 500){
                 alert("There was a server error. Please try again later");
             }
@@ -148,7 +156,7 @@
         }
     }
 
-    //pulls tweets from backend api enpoint and display on page 
+    //pulls tweets from backend api endpoint and display on page 
     function update() {
         var xhttp = new XMLHttpRequest();
         const method = 'GET';
@@ -157,7 +165,7 @@
 
         xhttp.onload = function() {
             const serverResponse = xhttp.response;
-            var itemList = serverResponse.response;
+            var itemList = serverResponse
             console.log(itemList);
             createTweetList(itemList);
         }
