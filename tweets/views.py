@@ -8,7 +8,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .serializers import TweetSerializer
+from .serializers import TweetSerializer, TweetActionSerializer
 
 from .models import Tweet
 from .forms import TweetForm
@@ -47,13 +47,55 @@ def tweet_create_view(request, *args, **kwargs):
 @api_view(['GET'])
 def tweet_detail_view(request, tweet_id, *args, **kwargs):
     queryset = Tweet.objects.filter(id = tweet_id)
-    if not queryset:
+    if not queryset.exists():
         return Response({}, status = 404)
     obj = queryset.first()
     serializer = TweetSerializer(obj)
     return Response(serializer.data, status = 200)
 
+# Django Rest Framework
+@api_view(['DELETE', 'POST'])
+@permission_classes([IsAuthenticated])
+def tweet_delete_view(request, tweet_id, *args, **kwargs):
+    queryset = Tweet.objects.filter(id = tweet_id)
+    if not queryset.exists():
+        return Response({}, status = 404)
+    queryset = queryset.filter(user = request.user)
+    if not queryset.exists():
+        return Response({"message": "You cannot delete this tweet"}, status = 404)
+    obj = queryset.first()
+    obj.delete()
+    return Response({"message": "Tweet removed"}, status = 200)
 
+# Django Rest Framework
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def tweet_action_view(request, *args, **kwargs):
+    '''
+    id is required
+    Actions: like, unlike, retweet
+    '''
+    serializer = TweetActionSerializer(data = request.POST)
+    if serializer.is_valid(raise_exception = True):
+        data = serializer.validated_data
+        tweet_id = data.get("id")
+        action = data.get("action")
+
+    queryset = Tweet.objects.filter(id = tweet_id)
+    if not queryset.exists():
+        return Response({}, status = 404)
+    obj = queryset.first()
+    if action == "like":
+        obj.likes.add(request.user)
+    elif action == "unlike":
+        obj.likes.remove(request.user)
+    elif action == "retweet":
+        #todo 
+        pass
+
+
+        
+    return Response({"message": "Tweet liked"}, status = 200)
 
 # Pure Django
 def tweet_list_view_pure_django(request, *args, **kwargs):
