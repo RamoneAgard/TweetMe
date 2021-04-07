@@ -116,6 +116,28 @@
     function handleDidLike(tweet_id, likeCount){
         //interact with api and update number of likes
         console.log(likeCount);
+        const url = "api/tweets/action";
+        const method = "POST";
+        const data = JSON.stringify({
+            id: tweet_id,
+            action: "like"
+        });
+
+        const csrftoken = getCookie('csrftoken');
+        const xhttp = new XMLHttpRequest();
+        xhttp.open(method, url);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+        xhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhttp.setRequestHeader('X-CSRFToken', csrftoken);
+        xhttp.onload = function() {
+            console.log(xhttp.response);
+            // react.js will take over here in future to handle state changes
+            update();
+        };
+        xhttp.send(data);
+
+
         return;
     }
 
@@ -154,6 +176,23 @@
             var curr = createTweetElement(items[i]);
             tweetsList.appendChild(curr);
         }
+    }
+
+    //Function provided by Django to get value of csrf token
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 
     //pulls tweets from backend api endpoint and display on page 

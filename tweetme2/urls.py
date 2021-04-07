@@ -36,8 +36,8 @@ urlpatterns = [
     path('create-tweet', tweet_create_view),
     # api path to delete a tweet
     path('api/tweets/<int:tweet_id/delete>', tweet_delete_view),
-    # api path to tweet actions 
-    path('api/tweets/action>', tweet_action_view),
+    # api path to tweet actions (like, retweet) 
+    path('api/tweets/action', tweet_action_view),
 
     
 ]
