@@ -19,6 +19,8 @@ class TweetLike(models.Model):
 class Tweet(models.Model):
     # id = models.AutoField(primary_key = True) -- created when stored
     user = models.ForeignKey(User, on_delete = models.CASCADE) # each tweet has one user
+    # Parent tweet for reference if this is a retweet
+    parent = models.ForeignKey("self", null = True, on_delete = models.SET_NULL)
     content = models.TextField(blank = True, null = True)
     likes = models.ManyToManyField(User, related_name= 'tweet_user', blank=True, through= TweetLike)
     image = models.FileField(upload_to ='images/', blank = True, null = True)
@@ -30,6 +32,11 @@ class Tweet(models.Model):
     class Meta:
         ordering = ['-id']
 
+    @property
+    def is_retweet(self):
+        return self.parent != None
+
+    # Old Way of Serializing data 
     def serialize(self):
         return {
                 "id" : self.id,

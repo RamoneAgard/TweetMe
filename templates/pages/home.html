@@ -113,14 +113,14 @@
     }
 
     //called when a tweet is liked 
-    function handleDidLike(tweet_id, likeCount){
+    function handleTweetAction(tweet_id, likeCount, action){
         //interact with api and update number of likes
         console.log(likeCount);
         const url = "api/tweets/action";
         const method = "POST";
         const data = JSON.stringify({
             id: tweet_id,
-            action: "like"
+            action: action
         });
 
         const csrftoken = getCookie('csrftoken');
@@ -144,10 +144,27 @@
     //create a like button for individual tweet element
     function likeBtn(item){
         var btn = document.createElement("BUTTON");
-
-        btn.setAttribute('class', 'btn btn-primary');
+        btn.setAttribute('class', 'btn btn-primary btn-sm');
         btn.innerHTML = item.likes + " Likes";
-        let input = 'handleDidLike('+ item.id+ ', '+ item.likes +')'
+        let input = 'handleTweetAction('+ item.id+ ', '+ item.likes +', "like")'
+        btn.setAttribute('onclick', input);
+        return btn;
+    }
+    //create an unlike button -- will be changed by react.js
+    function unlikeBtn(item){
+        var btn = document.createElement("BUTTON");
+        btn.setAttribute('class', 'btn btn-outline-primary btn-sm');
+        btn.innerHTML = "Unlike";
+        let input = 'handleTweetAction('+ item.id+ ', '+ item.likes +', "unlike")'
+        btn.setAttribute('onclick', input);
+        return btn;
+    }
+    //create an retweet button
+    function retweetBtn(item){
+        var btn = document.createElement("BUTTON");
+        btn.setAttribute('class', 'btn btn-outline-success btn-sm');
+        btn.innerHTML = "Retweet";
+        let input = 'handleTweetAction('+ item.id+ ', '+ item.likes +', "retweet")'
         btn.setAttribute('onclick', input);
         return btn;
     }
@@ -165,6 +182,8 @@
         var btnGroup = document.createElement('div');
         btnGroup.setAttribute('class', 'btn-group');
         btnGroup.appendChild(likeBtn(item));
+        btnGroup.appendChild(unlikeBtn(item));
+        btnGroup.appendChild(retweetBtn(item));
         newt.appendChild(btnGroup);
         return newt;
     }

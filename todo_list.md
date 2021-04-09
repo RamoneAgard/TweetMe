@@ -4,6 +4,8 @@
         - Image -> Media Storage Server 
     - Delete
     - Retweet
+        - Read only Serializer
+        - Create only Serializer
     - Like
 
 2. Users
