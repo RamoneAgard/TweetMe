@@ -65,7 +65,7 @@ def tweet_delete_view(request, tweet_id, *args, **kwargs):
         return Response({}, status = 404)
     queryset = queryset.filter(user = request.user)
     if not queryset.exists():
-        return Response({"message": "You cannot delete this tweet"}, status = 404)
+        return Response({"message": "You cannot delete this tweet"}, status = 403)
     obj = queryset.first()
     obj.delete()
     return Response({"message": "Tweet removed"}, status = 200)
@@ -95,15 +95,17 @@ def tweet_action_view(request, *args, **kwargs):
             return Response(serializer.data, status = 200)
         elif action == "unlike":
             obj.likes.remove(request.user)
+            serializer = TweetSerializer(obj)
+            return Response(serializer.data, status = 200)
         elif action == "retweet":
             newTweet = Tweet.objects.create(
                 user = request.user, 
                 parent = obj,
                 content = content)
             serializer = TweetSerializer(newTweet)
-            return Response(serializer.data, status = 200)
+            return Response(serializer.data, status = 201)
             
-    return Response({"message": "Tweet action complete"}, status = 200)
+    return Response({"message": "Tweet action not found"}, status = 400)
 
 # Pure Django
 def tweet_list_view_pure_django(request, *args, **kwargs):

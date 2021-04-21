@@ -1,21 +1,5 @@
-#python django app
-.DS_Store
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-__pycache__/
-parse.py
-
-*.log
-local_settings.py
-db.sqlite3
-
-.mypy_cache/
-
-.vscode/
-tweetme.code-workspace
-
-node_modules/
-
-#node.js react app
 # dependencies
 /node_modules
 /.pnp

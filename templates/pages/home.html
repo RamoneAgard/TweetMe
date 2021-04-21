@@ -116,7 +116,7 @@
     function handleTweetAction(tweet_id, likeCount, action){
         //interact with api and update number of likes
         console.log(likeCount);
-        const url = "api/tweets/action";
+        const url = "api/tweets/action/";
         const method = "POST";
         const data = JSON.stringify({
             id: tweet_id,

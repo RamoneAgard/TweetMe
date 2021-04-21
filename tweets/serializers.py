@@ -37,7 +37,7 @@ class TweetSerializer(serializers.ModelSerializer):
     # dont update this field
     likes = serializers.SerializerMethodField(read_only = True)
     parent = TweetCreateSerializer(read_only = True)
-    #content = serializers.SerializerMethodField(read_only = True)
+    #content = serializers.SerializerMethodField(read_only = True) --- needs a get method
     #is_retweet = serializers.SerializerMethodField(read_only = True)
 
     class Meta:
@@ -46,4 +46,10 @@ class TweetSerializer(serializers.ModelSerializer):
 
     def get_likes(self, obj):
         return obj.likes.count()
+    
+    # def get_content(self, obj):
+    #     content = obj.content  
+    #     if obj.is_retweet:
+    #         content = obj.parent.content
+    #     return content
     
