@@ -26,7 +26,7 @@ SECRET_KEY = 'o&%0l1_i=+fht)27r5+626+kfj67x4^y_w37w6oxut3vk*uykg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 #defualt is '/accounts/login/'
 LOGIN_URL = '/login'
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # third party
     'rest_framework',
+    'corsheaders',
     # internal
     'tweets',
 ]
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,6 +130,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# config documentation https://pypi.org/project/django-cors-headers/ 
+# allow cross site origin request between django back and react front
+CORS_ORIGIN_ALLOW_ALL = True #any site has access to api
+CORS_URLS_REGEX = r'^/api/.*$' #urls that match regular expression are allowed resources
+
 
 DEFAULT_RENDERER_CLASSES = [
         'rest_framework.renderers.JSONRenderer',

@@ -15,7 +15,7 @@
     <!-- Form for creating a new tweet -->
     <div class='row mb-4'>
         <div class='col-md-4 mx-auto col-10'>
-            <form id='tweet-create-form' class='form' method='POST' action='/create-tweet'>
+            <form id='tweet-create-form' class='form' method='POST' action='/api/tweets/create/'>
                 {% csrf_token %}
                 <div class='d-none alert alert-danger' id='tweet-create-form-error'>     
                 </div>
@@ -133,7 +133,7 @@
         xhttp.onload = function() {
             console.log(xhttp.response);
             // react.js will take over here in future to handle state changes
-            update();
+            update(tweetsList);
         };
         xhttp.send(data);
 
@@ -189,11 +189,11 @@
     }
 
     //create tweet elements and add to parent node
-    function createTweetList(items){
-        tweetsList.innerHTML = '';
+    function createTweetList(list, items){
+        list.innerHTML = '';
         for(var i = 0; i < items.length; i++){
             var curr = createTweetElement(items[i]);
-            tweetsList.appendChild(curr);
+            list.appendChild(curr);
         }
     }
 
@@ -215,17 +215,17 @@
     }
 
     //pulls tweets from backend api endpoint and display on page 
-    function update() {
+    function update(tList) {
         var xhttp = new XMLHttpRequest();
         const method = 'GET';
-        const url = 'tweets';
+        const url = '/api/tweets';
         const responseType = 'json';
 
         xhttp.onload = function() {
             const serverResponse = xhttp.response;
             var itemList = serverResponse
             console.log(itemList);
-            createTweetList(itemList);
+            createTweetList(tList, itemList);
         }
 
         // Old way to get response
@@ -239,7 +239,7 @@
         xhttp.responseType = responseType;
         xhttp.send()
     }
-    update();
+    update(tweetsList);
 
     </script>
 {% endblock %}
