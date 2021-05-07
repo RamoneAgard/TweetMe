@@ -131,6 +131,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static-root')
+
 # config documentation https://pypi.org/project/django-cors-headers/ 
 # allow cross site origin request between django back and react front
 CORS_ORIGIN_ALLOW_ALL = True #any site has access to api

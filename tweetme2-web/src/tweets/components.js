@@ -1,24 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import { loadTweets } from '../lookup'
 
+
+export function TweetsComponent(props) {
+    //set state variables
+    const [newTweets, setNewTweets] = useState([])
+    const textAreaRef = React.createRef()
+
+    //new tweet handler
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const newT = textAreaRef.current.value
+        let tempNewTweets = [...newTweets]
+        tempNewTweets.unshift({
+            content: newT,
+            likes: 0,
+            id: 15
+        })
+        setNewTweets(tempNewTweets)
+        console.log(newT)
+        textAreaRef.current.value = ''
+    }
+
+    return <div className={props.className}>
+        <div className='col-12 mb-3'>
+            <form onSubmit={handleSubmit}>
+                <textarea ref={textAreaRef} className='form-control' name='tweet' required={true}>
+                </textarea>
+                <button type='submit' className='btn btn-primary my-3'>Tweet</button>
+            </form>
+        </div>
+        <TweetsList newTweets={newTweets}/>
+    </div>
+
+}
+
 export function TweetsList(props) {
+    const [tweetsInit, setTweetsInit] = useState([]) 
     const [tweets, setTweets] = useState([])
     // const performLookup = () => {
     // }
+    
+    //combine new and inital tweets
+    useEffect(() => {
+        const final = [...props.newTweets].concat(tweetsInit)
+        if(final.length !== tweets.length){
+            setTweets(final)
+        }
+    }, [props.newTweets, tweetsInit, tweets]) 
+
+    //pull inital tweets
     useEffect(() => {
         const myCallback = (response, status) => {
             console.log(response, status)
             if (status === 200) {
-                setTweets(response)
+                setTweetsInit(response)
             }
             else {
-                setTweets([])
+                alert("There was an error")
             }
-
         }
-
         loadTweets(myCallback)
-
     }, [])
 
     return <div>
@@ -43,15 +85,26 @@ export function Tweet(props) {
 
 export function ActionBtn(props) {
     const { tweet, action } = props
-    const className = props.className ?
-        props.className : 'btn btn-primary btn-sm'
+    const [likes, setLikes] = useState(tweet.likes ? tweet.likes : 0)
+    const [userLike, setUserLike] = useState(tweet.userLike === true ? true : false)
+    const className = props.className ? props.className : 'btn btn-primary btn-sm'
     const actionDisplay = action.display ? action.display : 'Action'
     const display = action.type === 'like' ?
         `${tweet.likes} ${actionDisplay}` : actionDisplay
+
+    //handle like button
     const handleClick = (event) => {
         event.preventDefault()
-        if(action.type === 'like'){
-            console.log(tweet.likes + 1)
+        if (action.type === 'like') {
+            if (userLike === true) {
+                //unlike if already liked 
+                setLikes(likes - 1)
+                setUserLike(false)
+            }
+            else {
+                setLikes(likes + 1)
+                setUserLike(true)
+            }
         }
     }
     return <button className={className} onClick={handleClick}>

@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import {TweetsList} from './tweets'
+import {TweetsComponent} from './tweets'
 
 //pulls tweets from backend api endpoint and display on page 
 
@@ -14,7 +14,7 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <TweetsList />
+        <TweetsComponent />
         <a
           className="App-link"
           href="https://reactjs.org"
