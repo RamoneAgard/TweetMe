@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { loadTweets } from '../lookup'
+import { loadTweets, createTweet } from '../lookup'
 
 
 export function TweetsComponent(props) {
@@ -12,12 +12,22 @@ export function TweetsComponent(props) {
         event.preventDefault()
         const newT = textAreaRef.current.value
         let tempNewTweets = [...newTweets]
-        tempNewTweets.unshift({
-            content: newT,
-            likes: 0,
-            id: 15
+        //server side call
+        createTweet(newT, (response, status) => {
+            if(status === 201){
+                tempNewTweets.unshift(response)
+                setNewTweets(tempNewTweets)
+            }
+            else{
+                console.log(response)
+                alert("There was an error that occured")
+            }
         })
-        setNewTweets(tempNewTweets)
+        // tempNewTweets.unshift({
+        //     content: newT,
+        //     likes: 0,
+        //     id: 15
+        // })
         console.log(newT)
         textAreaRef.current.value = ''
     }
@@ -38,6 +48,7 @@ export function TweetsComponent(props) {
 export function TweetsList(props) {
     const [tweetsInit, setTweetsInit] = useState([]) 
     const [tweets, setTweets] = useState([])
+    const [tweetsDidSet, setTweetsDidSet] = useState(false)
     // const performLookup = () => {
     // }
     
@@ -51,17 +62,20 @@ export function TweetsList(props) {
 
     //pull inital tweets
     useEffect(() => {
-        const myCallback = (response, status) => {
-            console.log(response, status)
-            if (status === 200) {
-                setTweetsInit(response)
+        if (tweetsDidSet === false) {
+            const myCallback = (response, status) => {
+                console.log(response, status)
+                if (status === 200) {
+                    setTweetsInit(response)
+                    setTweetsDidSet(true)
+                }
+                else {
+                    alert("There was an error")
+                }
             }
-            else {
-                alert("There was an error")
-            }
+            loadTweets(myCallback)
         }
-        loadTweets(myCallback)
-    }, [])
+    }, [setTweetsInit, tweetsDidSet, setTweetsDidSet])
 
     return <div>
         {tweets.map((item, index) => {
@@ -77,7 +91,7 @@ export function Tweet(props) {
         <p>{tweet.id} - {tweet.content}</p>
         <div className='btn btn-group'>
             <ActionBtn tweet={tweet} action={{ type: 'like', display: "Likes" }} />
-            <ActionBtn tweet={tweet} action={{ type: 'unlike', display: "Unlike" }} />
+            {/* <ActionBtn tweet={tweet} action={{ type: 'unlike', display: "Unlike" }} /> */}
             <ActionBtn tweet={tweet} action={{ type: 'retweet', display: "Retweet" }} />
         </div>
     </div>
