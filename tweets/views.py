@@ -1,5 +1,6 @@
 import random
 from django.conf import settings
+from django.db.models.query_utils import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404, JsonResponse
 from django.utils.http import is_safe_url
@@ -31,15 +32,18 @@ def home_view(request, *args, **kwargs):
 @api_view(['GET'])
 def tweet_list_view(request, *args, **kwargs):
     queryset = Tweet.objects.all()
+    username = request.GET.get('username')
+    if(username != None):
+        queryset = queryset.filter(user__username__iexact = username)
     serializer = TweetSerializer(queryset, many = True)
-    return Response(serializer.data)
+    return Response(serializer.data, status = 200)
 
 # Django Rest Framework
 @api_view(['POST']) # client must send POST method
 # @authentication_classes([SessionAuthentication]) if we wanted to specify how to be authenticated
 @permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
-    serializer = TweetCreateSerializer(data = request.POST)
+    serializer = TweetCreateSerializer(data = request.data)
     if serializer.is_valid(raise_exception = True):
         serializer.save(user = request.user)
         return Response(serializer.data, status = 201)

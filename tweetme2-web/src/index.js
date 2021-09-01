@@ -15,14 +15,18 @@ if(appEl){
   );
 }
 
+const e = React.createElement
 const tweetsEl = document.getElementById('tweetme-2')
 if(tweetsEl){
-  ReactDOM.render(
-  <React.StrictMode>
-    <TweetsComponent />
-  </React.StrictMode>,
-  tweetsEl
-  );
+  //get data set from django template element
+  const MyComponent = e(TweetsComponent, tweetsEl.dataset)
+  ReactDOM.render(MyComponent, tweetsEl)
+  // ReactDOM.render(
+  // <React.StrictMode>
+  //   <TweetsComponent />
+  // </React.StrictMode>,
+  // tweetsEl
+  // );
 }
 
 
