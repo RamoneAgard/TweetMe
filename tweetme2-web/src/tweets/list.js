@@ -41,9 +41,9 @@ export function TweetsList(props) {
         const updateTweetsInit = [...tweetsInit]
         updateTweetsInit.unshift(newTweet)
         setTweetsInit(updateTweetsInit)
-        // const updateFinalTweets = [...tweets]
-        // updateFinalTweets.unshift(tweets)
-        // setTweets(updateFinalTweets)
+        const updateFinalTweets = [...tweets]
+        updateFinalTweets.unshift(tweets)
+        setTweets(updateFinalTweets)
     }
 
     return <div className='p-2'>

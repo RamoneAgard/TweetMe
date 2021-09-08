@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TweetsList } from './list'
 import { TweetCreate } from './create'
+import { Tweet } from './detail'
+import { apiTweetDetail } from './lookup'
 
 
 export function TweetsComponent(props) {
@@ -21,6 +23,36 @@ export function TweetsComponent(props) {
         <TweetsList newTweets={newTweets} {...props} />
     </div>
 
+}
+
+export function TweetDetailComponent(props) {
+    const {tweetId} = props 
+    const [didLookup, setDidLookup] = useState(false)
+    const [tweet, setTweet] = useState(null)
+
+    //callback for tweet detail lookup
+    const handleBackendLookup = (response, status) => {
+        if (status === 200) {
+            setTweet(response)
+        } else {
+            console.log(response)
+            alert("There was and error finding that tweet")
+        }
+    }
+
+    //perform backend lookup on creation
+    useEffect(() => {
+        if(didLookup === false){
+            apiTweetDetail(tweetId, handleBackendLookup)
+            setDidLookup(true)
+        }
+    }, [didLookup, setDidLookup, tweetId])
+
+    return tweet === null ? null :
+        <Tweet
+            tweet={tweet}
+            className={props.className}
+        />
 }
 
 
