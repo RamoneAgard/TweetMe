@@ -18,7 +18,7 @@ export function TweetsList(props) {
 
     //call for api tweet list response 
     const handleTweetListLookup = (response, status) => {
-        console.log(response, status)
+        //console.log(response, status)
         if (status === 200) {
             setTweetsInit(response)
             setTweetsDidSet(true)

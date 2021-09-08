@@ -7,7 +7,7 @@ import { apiTweetDetail } from './lookup'
 
 export function TweetsComponent(props) {
     //set state variables
-    console.log(props)
+    //console.log(props)
     const [newTweets, setNewTweets] = useState([])
     const canTweet = props.canTweet === "false" ? false : true
 

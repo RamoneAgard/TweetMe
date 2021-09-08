@@ -19,29 +19,24 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from tweets.views import (
-    home_view, 
+from tweets.views import ( 
     tweet_detail_view, 
     tweet_list_view,
-    tweet_create_view,
-    tweet_delete_view,
-    tweet_action_view
+    tweet_profile_view,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path for home page
-    path('', home_view),
-    # path to list view
-    path('tweets', tweet_list_view),
+    # path to list view / home page
+    path('', tweet_list_view),
     # path to a sepcific tweet
-    path('tweets/<int:tweet_id>', tweet_detail_view),
-    # path to create a tweet
-    path('create-tweet', tweet_create_view),
+    path('<int:tweet_id>', tweet_detail_view),
+    # path to user tweets/profile
+    path('profile/<str:username>', tweet_profile_view),
     # path to Tweets api points
-    path('api/tweets/', include('tweets.urls')),
+    path('api/tweets/', include('tweets.api.urls')),
     # path to react front app
-    path('react/', TemplateView.as_view(template_name='react.html')),
+    path('react/', TemplateView.as_view(template_name='react_via_dj.html')),
     
 ]
 
