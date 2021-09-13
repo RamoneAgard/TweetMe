@@ -37,6 +37,12 @@ export function backendLookup(method, endpoint, callback, data) {
 
   xhttp.onload = function () {
     //console.log(xhttp.response, xhttp.status)
+    if(xhttp.status === 403){
+      const detail = xhttp.response.detail
+      if (detail === "Authentication credentials were not provided."){
+        window.location.href = "/login?showLoginRequired=true"
+      }
+    }
     callback(xhttp.response, xhttp.status)
   }
   xhttp.onerror = function (e) {

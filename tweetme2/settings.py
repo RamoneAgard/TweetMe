@@ -26,7 +26,7 @@ SECRET_KEY = 'o&%0l1_i=+fht)27r5+626+kfj67x4^y_w37w6oxut3vk*uykg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1' ]
 
 #defualt is '/accounts/login/'
 LOGIN_URL = '/login'
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     # internal
+    'accounts',
     'tweets',
 ]
 
@@ -155,9 +156,9 @@ if DEBUG:
     DEFAULT_RENDERER_CLASSES += [ 
         'rest_framework.renderers.BrowsableAPIRenderer',
     ]
-    DEFAULT_AUTHENTICATION_CLASSES += [
-        'tweetme2.rest_api.dev.DevAuthentication',
-    ]       
+    # DEFAULT_AUTHENTICATION_CLASSES += [
+    #     'tweetme2.rest_api.dev.DevAuthentication',
+    # ]       
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': DEFAULT_AUTHENTICATION_CLASSES,
