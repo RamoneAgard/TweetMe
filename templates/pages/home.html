@@ -25,21 +25,26 @@
             </form>
         </div>
     </div>
-
-    <!-- Parent container for the tweets -->
-    <div id='tweetme-2'>
-    </div>
     
+    <!-- Parent container for the tweets -->
     <div id='tweets' class='row row-cols-1 justify-content-center d-none'>
         Loading ...
     </div>
 
 
+    <!-- Parent container for react app-->
+        <div id='tweetme-2'>
+        </div>
+
+
+
+
+        
     <!-- temp home view handling -->
     <script>
     const tweetsList = document.getElementById('tweets');
     const tweetCreateForm = document.getElementById('tweet-create-form');
-    tweetCreateForm.addEventListener('submit', handleTweetCreateFormSubmit);
+    //tweetCreateForm.addEventListener('submit', handleTweetCreateFormSubmit);
 
     //handle form submission for a new tweet
     function handleTweetCreateFormSubmit(event){
@@ -242,7 +247,8 @@
         xhttp.responseType = responseType;
         xhttp.send()
     }
-    update(tweetsList);
+    // How to start the inital request
+    //update(tweetsList);
 
     </script>
 {% endblock %}

@@ -18,7 +18,7 @@ class TweetLike(models.Model):
 
 class Tweet(models.Model):
     # id = models.AutoField(primary_key = True) -- created when stored
-    user = models.ForeignKey(User, on_delete = models.CASCADE) # each tweet has one user
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name= 'tweets') # each tweet has one user
     # Parent tweet for reference if this is a retweet
     parent = models.ForeignKey("self", null = True, on_delete = models.SET_NULL)
     content = models.TextField(blank = True, null = True)

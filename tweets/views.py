@@ -28,9 +28,4 @@ def tweet_detail_view(request, tweet_id, *args, **kwargs):
     context = {"tweet_id": tweet_id}
     return render(request, template_name, context, status)
 
-def tweet_profile_view(request, username, *args, **kwargs):
-    status = 200
-    template_name = "tweets/profile.html"
-    context = {"profile_username": username}
-    return render(request, template_name, context, status)
 
