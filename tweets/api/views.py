@@ -30,6 +30,16 @@ def tweet_list_view(request, *args, **kwargs):
     return Response(serializer.data, status = 200)
 
 # Django Rest Framework
+@api_view(['GET'])
+def tweet_feed_view(request, *args, **kwargs):
+    queryset = Tweet.objects.all()
+    username = request.GET.get('username')
+    if(username != None):
+        queryset = queryset.filter(user__username__iexact = username)
+    serializer = TweetSerializer(queryset, many = True)
+    return Response(serializer.data, status = 200)
+
+# Django Rest Framework
 @api_view(['POST']) # client must send POST method
 # @authentication_classes([SessionAuthentication]) if we wanted to specify how to be authenticated
 @permission_classes([IsAuthenticated])
@@ -105,6 +115,12 @@ def tweet_action_view(request, *args, **kwargs):
 
 
 
+
+
+
+'''
+Discontinued api views without DRF
+'''
 # Pure Django
 def tweet_list_view_pure_django(request, *args, **kwargs):
     '''
@@ -123,7 +139,7 @@ def tweet_list_view_pure_django(request, *args, **kwargs):
 
 def tweet_create_view_pure_django(request, *args, **kwargs):
     '''
-    REST API Create View -> Django Rest Framework
+    REST API Create View -> Django Rest Framework eventually 
     '''
     # request.user is AnonymousUser if not authenticated
     user = request.user 

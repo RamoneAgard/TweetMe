@@ -6,6 +6,10 @@ from .views import (
     profile_update_view,
 )
 
+'''
+BASE URL AT /profile/ 
+'''
+
 urlpatterns = [
     path('edit', profile_update_view),
     path('<str:username>', profile_detail_view),

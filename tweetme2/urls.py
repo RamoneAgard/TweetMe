@@ -44,8 +44,11 @@ urlpatterns = [
     re_path(r'profiles?/', include('profiles.urls')),
     # path to Tweets api points
     path('api/tweets/', include('tweets.api.urls')),
+    # path to Profile api views 
+    re_path(r'api/profiles?/', include('profiles.api.urls')),
     # *TEST URL* path to react front app Tweet Component
     path('react/', TemplateView.as_view(template_name='react_via_dj.html')),
+    
 ]
 
 if settings.DEBUG:
