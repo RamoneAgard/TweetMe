@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.db.models.query_utils import Q
+from django.core import paginator
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404, JsonResponse
 from django.utils.http import is_safe_url
@@ -7,6 +8,7 @@ from django.utils.http import is_safe_url
 # from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from ..serializers import (
     TweetSerializer, 
@@ -19,29 +21,34 @@ from ..forms import TweetForm
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 # Create your views here.
 
+def get_paginated_queryset_response(queryset, request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 20
+    paginated_query_set = paginator.paginate_queryset(queryset, request)
+    serializer = TweetSerializer(paginated_query_set, many = True)
+    return paginator.get_paginated_response(serializer.data)
+
 # Django Rest Framework
 @api_view(['GET'])
 def tweet_list_view(request, *args, **kwargs):
     queryset = Tweet.objects.all()
     username = request.GET.get('username')
     if(username != None):
-        queryset = queryset.filter(user__username__iexact = username)
-    serializer = TweetSerializer(queryset, many = True)
-    return Response(serializer.data, status = 200)
+        queryset = queryset.by_username(username)
+    return get_paginated_queryset_response(queryset, request)
 
 # Django Rest Framework
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def tweet_feed_view(request, *args, **kwargs):
-    queryset = Tweet.objects.all()
-    username = request.GET.get('username')
-    if(username != None):
-        queryset = queryset.filter(user__username__iexact = username)
-    serializer = TweetSerializer(queryset, many = True)
-    return Response(serializer.data, status = 200)
+    current_user = request.user
+    queryset = Tweet.objects.feed(current_user)
+    return get_paginated_queryset_response(queryset, request)
 
 # Django Rest Framework
-@api_view(['POST']) # client must send POST method
+# client must send POST method
 # @authentication_classes([SessionAuthentication]) if we wanted to specify how to be authenticated
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
     serializer = TweetCreateSerializer(data = request.data)

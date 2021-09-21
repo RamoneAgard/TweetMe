@@ -6,6 +6,7 @@ import { Tweet } from './detail'
 export function TweetsList(props) {
     const [tweetsInit, setTweetsInit] = useState([])
     const [tweets, setTweets] = useState([])
+    const [nextUrl, setNextUrl] = useState(null)
     const [tweetsDidSet, setTweetsDidSet] = useState(false)
 
     //combine new and inital tweets
@@ -20,7 +21,8 @@ export function TweetsList(props) {
     const handleTweetListLookup = (response, status) => {
         //console.log(response, status)
         if (status === 200) {
-            setTweetsInit(response)
+            setTweetsInit(response.results)
+            setNextUrl(response.next)
             setTweetsDidSet(true)
         }
         else {
@@ -32,7 +34,7 @@ export function TweetsList(props) {
     useEffect(() => {
         if (tweetsDidSet === false) {
             //server side call
-            apiTweetList(props.username, handleTweetListLookup)
+            apiTweetList(props.username, handleTweetListLookup, null)
         }
     }, [setTweetsInit, tweetsDidSet, setTweetsDidSet, props.username])
 
@@ -46,7 +48,27 @@ export function TweetsList(props) {
         setTweets(updateFinalTweets)
     }
 
-    return <div className='p-2'>
+    const handleLoadNext = (event) =>{
+        event.preventDefault()
+        if(nextUrl !== null){
+            const handleLoadNextResponse = (response, status) => {
+                if (status === 200) {
+                    const moreTweets = [...tweets].concat(response.results)
+                    setTweetsInit(moreTweets)
+                    setTweets(moreTweets)
+                    setNextUrl(response.next)
+                }
+                else {
+                    alert("There was an error")
+                }
+            }
+            apiTweetList(props.username, handleLoadNextResponse, nextUrl)
+
+        }
+    }
+
+
+    return <React.Fragment>
         {tweets.map((item, index) => {
             return <Tweet 
                 tweet={item} 
@@ -54,5 +76,12 @@ export function TweetsList(props) {
                 className='my-5 p-3 border rounded bg-white text-dark' 
                 key={`${index}-${item.id}`} />
         })}
-    </div>
+        {nextUrl !== null && 
+            <button 
+                className='btn btn-outline-primary'
+                onClick = {handleLoadNext}>
+                Load Next
+            </button>
+        }
+    </React.Fragment>
 }

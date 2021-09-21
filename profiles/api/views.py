@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.db.models.query_utils import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404, JsonResponse
 from django.contrib.auth import get_user_model
