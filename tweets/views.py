@@ -12,8 +12,10 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 # home view
 def home_view(request, *args, **kwargs):
     status = 200
-    template_name = "pages/home.html"
+    template_name = "pages/feed.html"
     context = {}
+    # if request.user.is_authenticated:
+    #     context['username'] = request.user.username
     return render(request, template_name, context, status)
 
 def tweet_list_view(request, *args, **kwargs):

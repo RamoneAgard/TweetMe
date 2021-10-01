@@ -26,18 +26,21 @@ from accounts.views import (
 )
 
 from tweets.views import ( 
+    home_view,
     tweet_detail_view, 
     tweet_list_view,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path to user feed view / home page
+    path('', home_view),
     # # paths to accounts app which handle login, logout, and registration
     path('login/', login_view),
     path('logout/', logout_view),
     path('register/', register_view),
-    # path to list view / home page
-    path('', tweet_list_view),
+    # path to global list view
+    path('global/', tweet_list_view),
     # path to a sepcific tweet in detail view
     path('<int:tweet_id>', tweet_detail_view),
     # path to Profile app views 

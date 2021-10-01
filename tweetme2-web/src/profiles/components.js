@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 //wraps and links an element with the user profile link
 export function UserLink(props){

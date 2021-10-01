@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { TweetsList } from './list'
 import { TweetCreate } from './create'
 import { Tweet } from './detail'
-import { TweetsFeedList } from './feed';
+import { TweetsFeedList } from './feed'
 import { apiTweetDetail } from './lookup'
 
 

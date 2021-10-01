@@ -2,7 +2,7 @@
 
 {% block head_title %}
     TweetMe Home
-{% endblock %}
+{% endblock head_title %}
 
 {% block content %}
     <!-- title div -->
@@ -26,15 +26,15 @@
         </div>
     </div>
     
-    <!-- Parent container for the tweets -->
+    <!-- Parent container for the tweets (pure js) -->
     <div id='tweets' class='row row-cols-1 justify-content-center d-none'>
         Loading ...
     </div>
 
 
     <!-- Parent container for react app-->
-        <div id='tweetme-2'>
-        </div>
+    <div id='tweetme-2'>
+    </div>
 
 
 
