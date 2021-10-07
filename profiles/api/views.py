@@ -18,12 +18,23 @@ User = get_user_model()
 
 @api_view(['GET']) # client must send POST method
 def profile_detail_api_view(request, username, *args, **kwargs):
+
     query_set = Profile.objects.filter(user__username = username)
     status = 200
     if not query_set.exists():
         status = 404
         return Response({"detail" : "User Not Found"}, status)
     profile_obj = query_set.first()
+    current_user = request.user
+    if (request.method == "POST") and (profile_obj.user != current_user):
+        data = request.data or {}
+        action = data.get("action")
+        if action == "follow":
+            profile_obj.followers.add(current_user)
+        elif action == "unfollow":
+            profile_obj.followers.remove(current_user)
+        else:
+            pass
     serializer = PublicProfileSerializer(instance = profile_obj, context = {"request" : request})
     return Response(serializer.data, status)
 
@@ -59,8 +70,6 @@ def user_follow_view(request, username, *args, **kwargs):
         follow_user_profile.followers.remove(current_user)
     else:
         pass
-    response_data = {
-        "count": follow_user_profile.followers.count()
-    }
-    return Response(response_data, status = 200)
+    serializer = PublicProfileSerializer(instance = follow_user_profile, context = {"request" : request})
+    return Response(serializer.data, status = 200)
 

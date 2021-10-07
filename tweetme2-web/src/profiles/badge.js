@@ -1,5 +1,29 @@
 import React, { useEffect, useState } from "react"
-import { apiProfileDetail } from './lookup'
+import { apiProfileDetail, apiProfileFollowToggle } from './lookup'
+import { UserDisplay, UserPicture } from './components'
+
+function ProfileBadge(props){
+    const {user, didFollowToggle, profileLoading} = props
+    //console.log(user)
+    let currentVerb = (user && user.is_following) ? "Unfollow" : "Follow"
+    currentVerb = profileLoading ? "Loading..." : currentVerb
+    const handleFollowToggle = (event) =>{
+        event.preventDefault()
+        if(didFollowToggle && !profileLoading){
+            didFollowToggle(currentVerb)
+        }
+    }
+
+    return user ? <div className='m-2'>
+        <UserPicture user={user} hideLink />
+        <p><UserDisplay user={user} includeFullName hideLink /></p>
+        <p>{user.follower_count} Followers</p>
+        <p>Following {user.following_count}</p>
+        <button className='btn btn-primary' onClick={handleFollowToggle}>
+            {currentVerb}
+        </button>
+    </div> : null
+}
 
 
 export function ProfileBadgeComponent(props){
@@ -8,6 +32,7 @@ export function ProfileBadgeComponent(props){
     //lookup
     const [didLookup, setDidLookup] = useState(false)
     const [profile, setProfile] = useState(null)
+    const [profileLoading, setProfileLoading] = useState(false)
 
     //callback for tweet detail lookup
     const handleBackendLookup = (response, status) => {
@@ -27,7 +52,19 @@ export function ProfileBadgeComponent(props){
         }
     }, [didLookup, setDidLookup, username])
 
+    //handles the follow button request and response
+    const handleFollowAction = (actionVerb) =>{
+        setProfileLoading(true)
+        const followToggleCallback = (response, status) =>{
+            //console.log(response)
+            if(status === 200){
+                setProfile(response)
+            }
+            setProfileLoading(false)
+        }
+        apiProfileFollowToggle(username, actionVerb, followToggleCallback)
+    }
+
     return didLookup === false ? "Loading" : profile ? 
-    <React.Fragment> {profile.username} </React.Fragment> 
-    : null
+    <ProfileBadge user={profile} didFollowToggle={handleFollowAction} profileLoading={profileLoading}/>: null
 }
