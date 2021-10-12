@@ -16,7 +16,7 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 User = get_user_model()
 # Create your views here.
 
-@api_view(['GET']) # client must send POST method
+@api_view(['GET', 'POST']) # client must send POST method
 def profile_detail_api_view(request, username, *args, **kwargs):
 
     query_set = Profile.objects.filter(user__username = username)
@@ -39,7 +39,8 @@ def profile_detail_api_view(request, username, *args, **kwargs):
     return Response(serializer.data, status)
 
 
-
+# Old Follow view
+'''
 @api_view(['GET','POST']) # client must send POST method
 @permission_classes([IsAuthenticated])
 def user_follow_view(request, username, *args, **kwargs):
@@ -72,4 +73,4 @@ def user_follow_view(request, username, *args, **kwargs):
         pass
     serializer = PublicProfileSerializer(instance = follow_user_profile, context = {"request" : request})
     return Response(serializer.data, status = 200)
-
+'''

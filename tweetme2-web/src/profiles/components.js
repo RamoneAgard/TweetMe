@@ -23,7 +23,7 @@ export function UserDisplay(props){
     {hideLink === true ? 
         `@${user.username}` :
         <UserLink username={user.username}>
-            @${user.username}
+            @{user.username}
         </UserLink>
     }   
     </React.Fragment>
